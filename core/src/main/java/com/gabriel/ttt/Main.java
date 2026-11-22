@@ -6,11 +6,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.gabriel.ttt.game.ShapeDrawer;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     private ShapeRenderer shape;
     private OrthographicCamera camera;
+    private ShapeDrawer shapeDrawer = new ShapeDrawer();
 
     @Override
     public void create() {
@@ -35,6 +37,7 @@ public class Main extends ApplicationAdapter {
     public void render() {
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
+        
 
         float gridSize = 300f;
         float thickness = 5f;
@@ -54,6 +57,9 @@ public class Main extends ApplicationAdapter {
         shape.rect(x, y + 200 - thickness / 2, gridSize, thickness);
 
         shape.end();
+
+        shapeDrawer.renderCircle();
+        shapeDrawer.renderX();
     }
 
     @Override
