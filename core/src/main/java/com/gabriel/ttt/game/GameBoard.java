@@ -4,9 +4,6 @@ package com.gabriel.ttt.game;
 public class GameBoard {
 
     public static final int SIZE = 3;
-
-    public static final float BOARD_X = 150;
-    public static final float BOARD_Y = 250;
     public static final float CELL_SIZE = 100;
 
     public static final int EMPTY = 0;
@@ -36,4 +33,26 @@ public class GameBoard {
         return row >= 0 && row < SIZE
             && col >= 0 && col < SIZE;
     }
+
+
+    public boolean isFull() {
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                if (board[row][col] == EMPTY) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public void reset() {
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                board[row][col] = EMPTY;
+            }
+        }
+    }
+
 }

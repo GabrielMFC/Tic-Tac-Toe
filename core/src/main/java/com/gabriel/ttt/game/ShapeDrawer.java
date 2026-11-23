@@ -7,9 +7,14 @@ import com.badlogic.gdx.math.Matrix4;
 
 public class ShapeDrawer {
 
+    private static final float SYMBOL_SIZE = 45f;
+    private static final float CIRCLE_RADIUS = 45f;
+
+    private final BoardLayout layout;
     private final ShapeRenderer shape;
 
-    public ShapeDrawer() {
+    public ShapeDrawer(BoardLayout layout) {
+        this.layout = layout;
         shape = new ShapeRenderer();
     }
 
@@ -18,21 +23,24 @@ public class ShapeDrawer {
     }
 
     public void render(GameBoard board) {
+        float cellSize = layout.getCellSize();
+
+        float boardWidth = GameBoard.SIZE * cellSize;
+        float boardHeight = GameBoard.SIZE * cellSize;
+
+        float boardX = layout.getBoardX();
+        float boardY = layout.getBoardY();
+
         shape.begin(ShapeRenderer.ShapeType.Line);
         shape.setColor(Color.WHITE);
 
-        renderBoard();
+        renderBoard(boardX, boardY, boardWidth, boardHeight);
 
         for (int row = 0; row < GameBoard.SIZE; row++) {
             for (int col = 0; col < GameBoard.SIZE; col++) {
 
-                float x = GameBoard.BOARD_X
-                    + col * GameBoard.CELL_SIZE
-                    + GameBoard.CELL_SIZE / 2;
-
-                float y = GameBoard.BOARD_Y
-                    + row * GameBoard.CELL_SIZE
-                    + GameBoard.CELL_SIZE / 2;
+                float x = boardX + col * cellSize + cellSize / 2f;
+                float y = boardY + row * cellSize + cellSize / 2f;
 
                 int cell = board.getCell(row, col);
 
@@ -47,38 +55,44 @@ public class ShapeDrawer {
         shape.end();
     }
 
-    private void renderBoard() {
+    private void renderBoard(float boardX, float boardY,
+                             float boardWidth, float boardHeight) {
+
+        float cellSize = layout.getCellSize();
+
         for (int i = 1; i < GameBoard.SIZE; i++) {
 
-            float position = GameBoard.BOARD_X
-                + i * GameBoard.CELL_SIZE;
+            float x = boardX + i * cellSize;
+            float y = boardY + i * cellSize;
 
+            // Linhas verticais
             shape.line(
-                position,
-                GameBoard.BOARD_Y,
-                position,
-                GameBoard.BOARD_Y + GameBoard.SIZE * GameBoard.CELL_SIZE
+                x, boardY,
+                x, boardY + boardHeight
             );
 
-            position = GameBoard.BOARD_Y
-                + i * GameBoard.CELL_SIZE;
-
+            // Linhas horizontais
             shape.line(
-                GameBoard.BOARD_X,
-                position,
-                GameBoard.BOARD_X + GameBoard.SIZE * GameBoard.CELL_SIZE,
-                position
+                boardX, y,
+                boardX + boardWidth, y
             );
         }
     }
 
     private void renderCircle(float x, float y) {
-        shape.circle(x, y, 35);
+        shape.circle(x, y, CIRCLE_RADIUS, 64);
     }
 
     private void renderX(float x, float y) {
-        shape.line(x - 35, y - 35, x + 35, y + 35);
-        shape.line(x + 35, y - 35, x - 35, y + 35);
+        shape.line(
+            x - SYMBOL_SIZE, y - SYMBOL_SIZE,
+            x + SYMBOL_SIZE, y + SYMBOL_SIZE
+        );
+
+        shape.line(
+            x + SYMBOL_SIZE, y - SYMBOL_SIZE,
+            x - SYMBOL_SIZE, y + SYMBOL_SIZE
+        );
     }
 
     public void dispose() {
