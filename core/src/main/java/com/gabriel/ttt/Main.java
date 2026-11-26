@@ -35,7 +35,7 @@ public class Main extends ApplicationAdapter {
         layout = new BoardLayout(camera);
 
         board = new GameBoard();
-        controller = new GameController(board, camera, layout);
+        controller = new GameController(camera, layout);
         drawer = new ShapeDrawer(layout);
         gameUI = new GameUI(controller);
 
