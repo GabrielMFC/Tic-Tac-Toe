@@ -1,4 +1,3 @@
-
 package com.gabriel.ttt.game;
 
 import com.badlogic.gdx.graphics.Color;
@@ -25,10 +24,11 @@ public class GameUI {
     private final BitmapFont font;
     private final Texture buttonTexture;
 
-    private final Label resultLabel;
+    private final Label statusLabel;
     private final TextButton restartButton;
 
     public GameUI(GameController controller) {
+
         this.controller = controller;
 
         stage = new Stage(new ScreenViewport());
@@ -57,15 +57,13 @@ public class GameUI {
 
         skin.add("default", labelStyle);
 
-        resultLabel = new Label("", skin);
+        statusLabel = new Label("Connecting...", skin);
         restartButton = new TextButton("RESTART", skin);
 
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 controller.restart();
-                resultLabel.setVisible(false);
-                restartButton.setVisible(false);
             }
         });
 
@@ -73,21 +71,22 @@ public class GameUI {
         table.setFillParent(true);
         table.bottom().center();
 
-        table.add(resultLabel).padBottom(12);
+        table.add(statusLabel).padBottom(12);
         table.row();
 
         table.add(restartButton)
             .size(160, 55)
             .padBottom(30);
 
-        resultLabel.setVisible(false);
         restartButton.setVisible(false);
 
         stage.addActor(table);
     }
 
     private Texture createButtonTexture() {
+
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+
         pixmap.setColor(Color.WHITE);
         pixmap.fill();
 
@@ -98,29 +97,15 @@ public class GameUI {
     }
 
     public void update() {
-        if (!controller.isGameOver()) {
-            return;
-        }
 
-        resultLabel.setVisible(true);
-        restartButton.setVisible(true);
+        statusLabel.setText(controller.getStatus());
 
-        if (controller.getWinner() == GameBoard.CIRCLE) {
-            resultLabel.setText("Circle wins!");
-        } else if (controller.getWinner() == GameBoard.X) {
-            resultLabel.setText("X wins!");
-        } else {
-            resultLabel.setText("It's a draw!");
-        }
+        restartButton.setVisible(controller.isGameOver());
     }
 
     public void render() {
         stage.act();
         stage.draw();
-    }
-
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
     }
 
     public Stage getStage() {

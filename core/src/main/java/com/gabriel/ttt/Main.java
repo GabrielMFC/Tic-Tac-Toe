@@ -1,4 +1,3 @@
-
 package com.gabriel.ttt;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -13,6 +12,9 @@ import com.gabriel.ttt.game.GameController;
 import com.gabriel.ttt.game.GameUI;
 import com.gabriel.ttt.game.ShapeDrawer;
 import com.gabriel.ttt.game.BoardLayout;
+import com.gabriel.ttt.rest.GameClient;
+
+import java.io.IOException;
 
 public class Main extends ApplicationAdapter {
 
@@ -24,31 +26,59 @@ public class Main extends ApplicationAdapter {
     private GameUI gameUI;
     private BoardLayout layout;
 
+    private GameClient gameClient;
+
     @Override
     public void create() {
+
         camera = new OrthographicCamera();
-        camera.setToOrtho(false,
+
+        camera.setToOrtho(
+            false,
             Gdx.graphics.getWidth(),
             Gdx.graphics.getHeight()
         );
+
         camera.update();
+
         layout = new BoardLayout(camera);
 
         board = new GameBoard();
-        controller = new GameController(camera, layout);
+
+        gameClient = new GameClient();
+
+        controller = new GameController(
+            camera,
+            layout,
+            board,
+            gameClient
+        );
+
+        gameClient.setMessageListener(controller::handleServerMessage);
+
         drawer = new ShapeDrawer(layout);
+
         gameUI = new GameUI(controller);
 
         drawer.setProjectionMatrix(camera.combined);
 
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
+
         inputMultiplexer.addProcessor(gameUI.getStage());
 
         Gdx.input.setInputProcessor(inputMultiplexer);
+
+        try {
+            gameClient.connect("192.168.0.104", 8080);
+        } catch (IOException e) {
+            System.err.println("Não foi possível conectar ao servidor.");
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void resize(int width, int height) {
+
         camera.setToOrtho(false, width, height);
         camera.update();
 
@@ -61,9 +91,11 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
+
         ScreenUtils.clear(Color.BLACK);
 
         controller.update();
+
         drawer.render(board);
 
         gameUI.update();
@@ -72,6 +104,11 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void dispose() {
+
+        if (gameClient != null) {
+            gameClient.disconnect();
+        }
+
         drawer.dispose();
         gameUI.dispose();
     }

@@ -1,4 +1,3 @@
-
 package com.gabriel.ttt.game;
 
 public class GameBoard {
@@ -13,6 +12,7 @@ public class GameBoard {
     private final int[][] board = new int[SIZE][SIZE];
 
     public boolean placePiece(int row, int col, int player) {
+
         if (!isValidPosition(row, col)) {
             return false;
         }
@@ -25,6 +25,12 @@ public class GameBoard {
         return true;
     }
 
+    public void setCell(int row, int col, int player) {
+        if (isValidPosition(row, col)) {
+            board[row][col] = player;
+        }
+    }
+
     public int getCell(int row, int col) {
         return board[row][col];
     }
@@ -33,7 +39,6 @@ public class GameBoard {
         return row >= 0 && row < SIZE
             && col >= 0 && col < SIZE;
     }
-
 
     public boolean isFull() {
         for (int row = 0; row < SIZE; row++) {
@@ -54,5 +59,4 @@ public class GameBoard {
             }
         }
     }
-
 }
